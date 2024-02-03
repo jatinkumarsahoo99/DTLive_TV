@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as number;
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dtlive/model/subtitlemodel.dart';
 import 'package:dtlive/pages/player_pod.dart';
 import 'package:dtlive/pages/player_better.dart';
@@ -45,6 +46,20 @@ class Utils {
     // } else if (Platform.isAndroid) {
     //   await ScreenProtector.protectDataLeakageOn();
     // }
+  }
+
+  static Future<String> getAndroidAPILevel() async {
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    var dataNew = await deviceInfoPlugin.androidInfo;
+    if (kDebugMode) {
+      print(">>>>>>>>>>data${dataNew.data['version']['sdkInt']}");
+    }
+    if(dataNew.data['version'] != null && dataNew.data['version']['sdkInt'] != null){
+      return (dataNew.data['version']['sdkInt']??"0").toString();
+    }else{
+      return "0";
+    }
+
   }
   static Widget showBannerAd(BuildContext context) {
     if (!kIsWeb) {

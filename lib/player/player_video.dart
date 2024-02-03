@@ -233,7 +233,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
       _chewieController?.removeListener(() {});
       _chewieController?.videoPlayerController.dispose();
     }
-    if (!(kIsWeb) || !(Constant.isTV)) {
+    if ((kIsWeb) || !(Constant.isTV)) {
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -505,7 +505,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
   }
 
   Future<bool> onBackPressed() async {
-    if (!(kIsWeb) || !(Constant.isTV)) {
+    if ((kIsWeb) || !(Constant.isTV)) {
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,

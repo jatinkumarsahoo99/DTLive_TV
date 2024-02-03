@@ -45,6 +45,10 @@ Future<void> main() async {
     //Remove this method to stop OneSignal Debugging
     OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
     OneSignal.shared.setAppId(Constant.oneSignalAppId);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt.
     // We recommend removing the following code and instead using an In-App Message to prompt for notification permission
     OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
@@ -178,7 +182,8 @@ class _MyAppState extends State<MyApp> {
         },
         home: const Splash(),
         routes: {"/find": (context) => Find(),
-          "/login": (context) => LoginScreen(),},
+          "/login": (context) => LoginScreen(),
+        },
         // home: const TestPageController(),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {

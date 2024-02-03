@@ -96,7 +96,7 @@ class _SideMenuState extends State<SideMenu> {
           showToggleButton: false,
           controller: widget._controller,
           theme: SidebarXTheme(
-            width: 90,
+            width: 120,
             decoration: BoxDecoration(
               color: appBgColor,
               borderRadius: BorderRadius.circular(10),
@@ -107,28 +107,29 @@ class _SideMenuState extends State<SideMenu> {
             itemTextPadding: EdgeInsets.zero,
             selectedItemMargin: EdgeInsets.zero,
             selectedItemTextPadding: EdgeInsets.zero,
-            selectedItemPadding: EdgeInsets.zero,
+            selectedItemPadding: EdgeInsets.zero,padding: EdgeInsets.only(left: 3)
           ),
           extendedTheme: const SidebarXTheme(
-            width: 90,
+            width: 120,
             decoration: BoxDecoration(
               color: appBgColor,
             ),
           ),
           headerBuilder: (context, extended) {
             return _buildHeader(extended);
+            // return Container();
           },
           items: List<SidebarXItem>.generate(
-            (homeProvider.sectionTypeModel.result?.length ?? 0) + 1,
-            // (homeProvider.sectionTypeModel.result?.length ?? 0) + 2,
+            // (homeProvider.sectionTypeModel.result?.length ?? 0) + 1,
+            (homeProvider.sectionTypeModel.result?.length ?? 0) + 2,
             (index) {
-              /*if (index ==
+              if (index ==
                   ((homeProvider.sectionTypeModel.result?.length ?? 0) + 1)) {
                 return _buildNavigation1(
                   index: index,
                   sectionTypeList: homeProvider.sectionTypeModel.result,
                 );
-              }*/
+              }
               return _buildNavigation(
                 index: index,
                 sectionTypeList: homeProvider.sectionTypeModel.result,
@@ -147,7 +148,7 @@ class _SideMenuState extends State<SideMenu> {
     return SidebarXItem(
       label: '',
       iconWidget: Container(
-        alignment: Alignment.center,
+        alignment: Alignment.topLeft,
         constraints: const BoxConstraints(minWidth: 70),
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: FocusBase(
@@ -172,7 +173,7 @@ class _SideMenuState extends State<SideMenu> {
             builder: (context, homeProvider, child) {
               return Container(
                 constraints: const BoxConstraints(maxHeight: 20),
-                alignment: Alignment.center,
+                alignment: Alignment.topLeft,
                 child: MyText(
                   color: white,
                   multilanguage: false,
@@ -186,7 +187,7 @@ class _SideMenuState extends State<SideMenu> {
                   fontsizeWeb: 14,
                   maxline: 1,
                   overflow: TextOverflow.ellipsis,
-                  textalign: TextAlign.center,
+                  textalign: TextAlign.left,
                   fontstyle: FontStyle.normal,
                 ),
               );
@@ -204,7 +205,7 @@ class _SideMenuState extends State<SideMenu> {
     return SidebarXItem(
       label: '',
       iconWidget: Container(
-        alignment: Alignment.center,
+        alignment: Alignment.topLeft,
         constraints: const BoxConstraints(minWidth: 70),
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: FocusBase(
@@ -225,7 +226,7 @@ class _SideMenuState extends State<SideMenu> {
             builder: (context, homeProvider, child) {
               return Container(
                 constraints: const BoxConstraints(maxHeight: 20),
-                alignment: Alignment.center,
+                alignment: Alignment.topLeft,
                 child: MyText(
                   color: white,
                   multilanguage: false,
@@ -235,7 +236,7 @@ class _SideMenuState extends State<SideMenu> {
                   fontsizeWeb: 14,
                   maxline: 1,
                   overflow: TextOverflow.ellipsis,
-                  textalign: TextAlign.center,
+                  textalign: TextAlign.left,
                   fontstyle: FontStyle.normal,
                 ),
               );
@@ -309,10 +310,8 @@ class _SideMenuState extends State<SideMenu> {
         Navigator.pushNamed(context, "/login");
         break;
       case 'Search':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) => Find()),
-        );
+        Navigator.pushNamed(context, "/find");
+        // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Find()),);
         break;
       default:
         widget._controller.selectIndex(0);
@@ -354,32 +353,37 @@ class _SideMenuState extends State<SideMenu> {
   Widget _buildHeader(bool isExpand) {
     return Consumer<ProfileProvider>(
       builder: (context, profileProvider, child) {
-        return Container(
-          margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-          height: 40,
-          width: 40,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: FocusBase(
-              focusColor: white,
-              onFocus: (isFocused) {},
-              onPressed: () {},
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              height: 40,
+              width: 40,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: MyUserNetworkImage(
-                  imageUrl: profileProvider.profileModel.status == 200
-                      ? profileProvider.profileModel.result != null
-                          ? (profileProvider.profileModel.result?.image ??
-                              "")
-                          : ""
-                      : "",
-                  fit: BoxFit.cover,
+                child: FocusBase(
+                  focusColor: white,
+                  onFocus: (isFocused) {},
+                  onPressed: () {},
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    child: MyUserNetworkImage(
+                      imageUrl: profileProvider.profileModel.status == 200
+                          ? profileProvider.profileModel.result != null
+                              ? (profileProvider.profileModel.result?.image ??
+                                  "")
+                              : ""
+                          : "",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         );
       },
     );

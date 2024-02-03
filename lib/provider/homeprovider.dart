@@ -16,7 +16,6 @@ class HomeProvider extends ChangeNotifier {
     List<String> otherPages = [
       "Channels",
       "Store",
-      "Search",
       Constant.userID != null ? "Logout" : "Login"
 
     ];
@@ -55,7 +54,6 @@ class HomeProvider extends ChangeNotifier {
     List<String> otherPages = [
       "Channels",
       "Store",
-      "Search",
       Constant.userID != null ? "Logout" : "Login"
     ];
     List<Result>? pagesList = [];

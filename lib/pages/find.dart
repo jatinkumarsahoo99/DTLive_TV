@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:ffi';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:dtlive/pages/search.dart';
 import 'package:dtlive/pages/sectionbytype.dart';
@@ -9,18 +11,24 @@ import 'package:dtlive/pages/videosbyid.dart';
 import 'package:dtlive/provider/findprovider.dart';
 import 'package:dtlive/shimmer/shimmerutils.dart';
 import 'package:dtlive/utils/color.dart';
+import 'package:dtlive/utils/constant.dart';
 import 'package:dtlive/utils/strings.dart';
 import 'package:dtlive/utils/utils.dart';
 import 'package:dtlive/widget/myimage.dart';
 import 'package:dtlive/widget/mytext.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
+import '../widget/focusbase.dart';
+import 'KeyBoardIntentFile.dart';
+
 class Find extends StatefulWidget {
-  const Find({Key? key}) : super(key: key);
+   Find({Key? key}) : super(key: key);
 
   @override
   State<Find> createState() => FindState();
@@ -38,28 +46,45 @@ class FindState extends State<Find> {
     _getData();
     findProvider = Provider.of<FindProvider>(context, listen: false);
     _initSpeech();
+    Utils.getAndroidAPILevel().then((value) {
+      Constant.androidAPILevel = value;
+      setState(() {
+
+      });
+    });
     super.initState();
   }
 
   /// This has to happen only once per app
   void _initSpeech() async {
-    speechEnabled = await _speechToText.initialize();
-    setState(() {});
+    try{
+      speechEnabled = await _speechToText.initialize(debugLogging: true, options: [SpeechToText.androidIntentLookup]);
+      setState(() {});
+    }catch(e){
+      if (kDebugMode) {
+        print(">>>>>>$e");
+      }
+    }
+
   }
 
   /// Each time to start a speech recognition session
   void _startListening() async {
-    debugPrint("<============== _startListening ==============>");
-    await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {
-      _isListening = true;
-    });
-    Future.delayed(const Duration(seconds: 5), () {
-      if (_isListening && searchController.text.toString().isEmpty) {
-        Utils.showSnackbar(context, "info", "speechnotavailable", true);
-        _stopListening();
-      }
-    });
+    try{
+      debugPrint("<============== _startListening ==============>");
+      await _speechToText.listen(onResult: _onSpeechResult);
+      setState(() {
+        _isListening = true;
+      });
+      Future.delayed(const Duration(seconds: 5), () {
+        if (_isListening && searchController.text.toString().isEmpty) {
+          Utils.showSnackbar(context, "info", "speechnotavailable", true);
+          _stopListening();
+        }
+      });
+    }catch(e){
+      showInSnackBar(context,(e??"Click on Microphone!").toString());
+    }
   }
 
   /// Manually stop the active speech recognition session
@@ -113,6 +138,9 @@ class FindState extends State<Find> {
       setState(() {});
     });
   }
+  List<FocusNode>? lstFocusNode;
+  List<FocusNode>? lstFocusNode2;
+  List<FocusNode>? lstFocusNode3;
 
   @override
   void dispose() {
@@ -122,8 +150,13 @@ class FindState extends State<Find> {
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    if(focusNode1 == null){
+      setFirstFocus(context);
+    }
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: appBgColor,
@@ -143,6 +176,13 @@ class FindState extends State<Find> {
                 /* Genres */
                 Consumer<FindProvider>(
                   builder: (context, findProvider, child) {
+                    lstFocusNode = List.generate
+                      ((findProvider.sectionTypeModel.result?.length??0), (index) => FocusNode());
+                    lstFocusNode2 = List.generate
+                      ((findProvider.genresModel.result?.length??0), (index) => FocusNode());
+                    lstFocusNode3 = List.generate
+                      ((findProvider.langaugeModel.result?.length??0), (index) => FocusNode());
+
                     log("setGenresSize  ===>  ${findProvider.setGenresSize}");
                     log("genresModel Size  ===>  ${(findProvider.genresModel.result?.length ?? 0)}");
                     if (findProvider.loading) {
@@ -152,25 +192,29 @@ class FindState extends State<Find> {
                         if (findProvider.genresModel.result != null &&
                             (findProvider.genresModel.result?.length ?? 0) >
                                 0) {
-                          return Column(
+                           return Column(
                             children: [
                               /* Browse by START */
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding:
-                                    const EdgeInsets.only(left: 20, right: 20),
-                                alignment: Alignment.centerLeft,
-                                child: MyText(
-                                  color: white,
-                                  text: "browsby",
-                                  multilanguage: true,
-                                  textalign: TextAlign.center,
-                                  fontsizeNormal: 15,
-                                  fontsizeWeb: 16,
-                                  maxline: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontweight: FontWeight.w600,
-                                  fontstyle: FontStyle.normal,
+                              Focus(
+                                skipTraversal: true,
+                                descendantsAreTraversable: false,autofocus: false,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding:
+                                      const EdgeInsets.only(left: 20, right: 20),
+                                  alignment: Alignment.centerLeft,
+                                  child: MyText(
+                                    color: white,
+                                    text: "browsby",
+                                    multilanguage: true,
+                                    textalign: TextAlign.center,
+                                    fontsizeNormal: 15,
+                                    fontsizeWeb: 16,
+                                    maxline: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontweight: FontWeight.w600,
+                                    fontstyle: FontStyle.normal,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -187,45 +231,54 @@ class FindState extends State<Find> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder:
                                     (BuildContext context, int position) {
-                                  return InkWell(
-                                    borderRadius: BorderRadius.circular(4),
-                                    onTap: () {
-                                      log("Item Clicked! => $position");
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => SectionByType(
-                                              findProvider.sectionTypeModel
-                                                      .result?[position].id ??
-                                                  0,
-                                              findProvider.sectionTypeModel
-                                                      .result?[position].name ??
-                                                  "",
-                                              "2"),
-                                        ),
-                                      );
+                                  return Actions(
+                                    actions: <Type, Action<Intent>>{
+                                      RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,null,isPrv: false)),
+                                      LeftButtonIntent:CallbackAction<LeftButtonIntent>(onInvoke:(intent)=> changeFocus(context,null,isPrv: true)),
                                     },
-                                    child: Container(
-                                      height: 65,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 0, 10, 0),
-                                      decoration: BoxDecoration(
-                                        color: primaryDarkColor,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: MyText(
-                                        color: white,
-                                        text: findProvider.sectionTypeModel
-                                                .result?[position].name ??
-                                            "",
-                                        textalign: TextAlign.center,
-                                        fontstyle: FontStyle.normal,
-                                        multilanguage: false,
-                                        fontsizeNormal: 14,
-                                        fontsizeWeb: 14,
-                                        fontweight: FontWeight.w600,
-                                        maxline: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                    child: FocusBase(
+                                      // borderRadius: BorderRadius.circular(4),
+                                      onPressed: () {
+                                        log("Item Clicked! => $position");
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => SectionByType(
+                                                findProvider.sectionTypeModel
+                                                        .result?[position].id ??
+                                                    0,
+                                                findProvider.sectionTypeModel
+                                                        .result?[position].name ??
+                                                    "",
+                                                "2"),
+                                          ),
+                                        );
+                                      },
+                                      focusColor: Colors.grey,
+                                      onFocus: (sta){},
+                                      focusNodeNew:lstFocusNode?[position],
+                                      child: Container(
+                                        height: 65,
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 0, 10, 0),
+                                        decoration: BoxDecoration(
+                                          color: primaryDarkColor,
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: MyText(
+                                          color: white,
+                                          text: findProvider.sectionTypeModel
+                                                  .result?[position].name ??
+                                              "",
+                                          textalign: TextAlign.center,
+                                          fontstyle: FontStyle.normal,
+                                          multilanguage: false,
+                                          fontsizeNormal: 14,
+                                          fontsizeWeb: 14,
+                                          fontweight: FontWeight.w600,
+                                          maxline: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
                                   );
@@ -235,22 +288,26 @@ class FindState extends State<Find> {
                               const SizedBox(height: 22),
 
                               /* Genres START */
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding:
-                                    const EdgeInsets.only(left: 20, right: 20),
-                                alignment: Alignment.centerLeft,
-                                child: MyText(
-                                  color: white,
-                                  text: "genres",
-                                  textalign: TextAlign.center,
-                                  fontsizeNormal: 15,
-                                  fontsizeWeb: 16,
-                                  fontweight: FontWeight.w600,
-                                  multilanguage: true,
-                                  maxline: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontstyle: FontStyle.normal,
+                              Focus(
+                                skipTraversal: true,
+                                descendantsAreTraversable: false,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding:
+                                      const EdgeInsets.only(left: 20, right: 20),
+                                  alignment: Alignment.centerLeft,
+                                  child: MyText(
+                                    color: white,
+                                    text: "genres",
+                                    textalign: TextAlign.center,
+                                    fontsizeNormal: 15,
+                                    fontsizeWeb: 16,
+                                    fontweight: FontWeight.w600,
+                                    multilanguage: true,
+                                    maxline: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontstyle: FontStyle.normal,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 15),
@@ -274,69 +331,82 @@ class FindState extends State<Find> {
                                     (BuildContext context, int position) {
                                   return Column(
                                     children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 0.9,
-                                        color: lightBlack,
+                                      Focus(
+                                        skipTraversal: true,
+                                        descendantsAreTraversable: false,
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: 0.9,
+                                          color: lightBlack,
+                                        ),
                                       ),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(4),
-                                        onTap: () {
-                                          log("Item Clicked! => $position");
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return VideosByID(
-                                                  findProvider
-                                                          .genresModel
-                                                          .result?[position]
-                                                          .id ??
-                                                      0,
-                                                  0,
-                                                  findProvider
+                                      Actions(
+                                        actions: <Type, Action<Intent>>{
+                                          UpButtonIntent:CallbackAction<UpButtonIntent>(onInvoke:(intent)=> changeFocus(context,null,isPrv: true)),
+                                          DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,null,isPrv: false)),
+                                        },
+                                        child: FocusBase(
+                                          // borderRadius: BorderRadius.circular(4),
+                                          onPressed: () {
+                                            log("Item Clicked! => $position");
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return VideosByID(
+                                                    findProvider
+                                                            .genresModel
+                                                            .result?[position]
+                                                            .id ??
+                                                        0,
+                                                    0,
+                                                    findProvider
+                                                            .genresModel
+                                                            .result?[position]
+                                                            .name ??
+                                                        "",
+                                                    "ByCategory",
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                          onFocus: (sta ) {  },
+                                          focusColor: Colors.grey.withOpacity(0.2),
+                                          focusNodeNew: lstFocusNode2?[position],
+                                          child: SizedBox(
+                                            height: 47,
+                                            width:
+                                                MediaQuery.of(context).size.width,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                MyText(
+                                                  color: otherColor,
+                                                  text: findProvider
                                                           .genresModel
                                                           .result?[position]
                                                           .name ??
                                                       "",
-                                                  "ByCategory",
-                                                );
-                                              },
+                                                  textalign: TextAlign.center,
+                                                  fontsizeNormal: 13,
+                                                  fontsizeWeb: 14,
+                                                  multilanguage: false,
+                                                  maxline: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  fontweight: FontWeight.w500,
+                                                  fontstyle: FontStyle.normal,
+                                                ),
+                                                MyImage(
+                                                  width: 13,
+                                                  height: 13,
+                                                  color: otherColor,
+                                                  imagePath: "ic_right.png",
+                                                ),
+                                              ],
                                             ),
-                                          );
-                                        },
-                                        child: SizedBox(
-                                          height: 47,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              MyText(
-                                                color: otherColor,
-                                                text: findProvider
-                                                        .genresModel
-                                                        .result?[position]
-                                                        .name ??
-                                                    "",
-                                                textalign: TextAlign.center,
-                                                fontsizeNormal: 13,
-                                                fontsizeWeb: 14,
-                                                multilanguage: false,
-                                                maxline: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                fontweight: FontWeight.w500,
-                                                fontstyle: FontStyle.normal,
-                                              ),
-                                              MyImage(
-                                                width: 13,
-                                                height: 13,
-                                                color: otherColor,
-                                                imagePath: "ic_right.png",
-                                              ),
-                                            ],
                                           ),
                                         ),
                                       ),
@@ -346,31 +416,41 @@ class FindState extends State<Find> {
                               ),
                               Visibility(
                                 visible: findProvider.isGenSeeMore,
-                                child: InkWell(
-                                  onTap: () {
-                                    final findProvider =
-                                        Provider.of<FindProvider>(context,
-                                            listen: false);
-                                    findProvider.setGenSeeMore(false);
-                                    findProvider.setGenresListSize(findProvider
-                                            .genresModel.result?.length ??
-                                        0);
+                                child: Actions(
+                                  actions: <Type, Action<Intent>>{
+                                    UpButtonIntent:CallbackAction<UpButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode2?[4],isPrv: false)),
+                                    DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode3?[0],isPrv: false)),
                                   },
-                                  child: Container(
-                                    height: 30,
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 20),
-                                    alignment: Alignment.centerLeft,
-                                    child: MyText(
-                                      color: primaryColor,
-                                      text: "seemore",
-                                      textalign: TextAlign.center,
-                                      fontsizeNormal: 14,
-                                      maxline: 1,
-                                      multilanguage: true,
-                                      overflow: TextOverflow.ellipsis,
-                                      fontweight: FontWeight.w500,
-                                      fontstyle: FontStyle.normal,
+                                  child: FocusBase(
+                                    onPressed: () {
+                                      final findProvider =
+                                          Provider.of<FindProvider>(context,
+                                              listen: false);
+                                      findProvider.setGenSeeMore(false);
+                                      findProvider.setGenresListSize(findProvider
+                                              .genresModel.result?.length ??
+                                          0);
+                                    },
+                                    onFocus: (sta ) {  },
+                                    focusNodeNew: focusNode4,
+                                    focusColor: Colors.grey.withOpacity(0.2),
+                                    child: Container(
+                                      height: 30,
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
+                                      alignment: Alignment.centerLeft,
+                                      child: MyText(
+                                        color: primaryColor,
+                                        text: "seemore",
+                                        textalign: TextAlign.center,
+                                        fontsizeNormal: 14,
+                                        maxline: 1,
+                                        fontsizeWeb: 20,
+                                        multilanguage: true,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontweight: FontWeight.w500,
+                                        fontstyle: FontStyle.normal,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -379,22 +459,26 @@ class FindState extends State<Find> {
                               const SizedBox(height: 30),
 
                               /* Language START */
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding:
-                                    const EdgeInsets.only(left: 20, right: 20),
-                                alignment: Alignment.centerLeft,
-                                child: MyText(
-                                  color: white,
-                                  multilanguage: true,
-                                  text: "language_",
-                                  textalign: TextAlign.center,
-                                  fontsizeNormal: 15,
-                                  fontsizeWeb: 16,
-                                  maxline: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontweight: FontWeight.w600,
-                                  fontstyle: FontStyle.normal,
+                              Focus(
+                                skipTraversal: true,
+                                descendantsAreTraversable: false,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding:
+                                      const EdgeInsets.only(left: 20, right: 20),
+                                  alignment: Alignment.centerLeft,
+                                  child: MyText(
+                                    color: white,
+                                    multilanguage: true,
+                                    text: "language_",
+                                    textalign: TextAlign.center,
+                                    fontsizeNormal: 15,
+                                    fontsizeWeb: 16,
+                                    maxline: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontweight: FontWeight.w600,
+                                    fontstyle: FontStyle.normal,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 15),
@@ -418,69 +502,83 @@ class FindState extends State<Find> {
                                     (BuildContext context, int position) {
                                   return Column(
                                     children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 0.9,
-                                        color: lightBlack,
+                                      Focus(
+                                        skipTraversal: true,
+                                        descendantsAreTraversable: false,
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: 0.9,
+                                          color: lightBlack,
+                                        ),
                                       ),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(4),
-                                        onTap: () {
-                                          log("Item Clicked! => $position");
-                                         /* Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return VideosByID(
-                                                  findProvider
-                                                          .langaugeModel
-                                                          .result?[position]
-                                                          .id ??
-                                                      0,
-                                                  0,
-                                                  findProvider
+                                      Actions(
+                                        actions: <Type, Action<Intent>>{
+                                          UpButtonIntent:CallbackAction<UpButtonIntent>(onInvoke:(intent)=> changeFocus(context,null,isPrv: true)),
+                                          DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,null,isPrv: false)),
+                                        },
+                                        child: FocusBase(
+                                          // borderRadius: BorderRadius.circular(4),
+                                          onPressed: () {
+                                            log("Item Clicked! => $position");
+                                           /* Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return VideosByID(
+                                                    findProvider
+                                                            .langaugeModel
+                                                            .result?[position]
+                                                            .id ??
+                                                        0,
+                                                    0,
+                                                    findProvider
+                                                            .langaugeModel
+                                                            .result?[position]
+                                                            .name ??
+                                                        "",
+                                                    "ByLanguage",
+                                                  );
+                                                },
+                                              ),
+                                            );*/
+                                          },
+
+                                          onFocus: (sta ) {  },
+                                          focusNodeNew: lstFocusNode3?[position],
+                                          focusColor: Colors.grey.withOpacity(0.2),
+                                          child: SizedBox(
+                                            height: 47,
+                                            width:
+                                                MediaQuery.of(context).size.width,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                MyText(
+                                                  color: otherColor,
+                                                  text: findProvider
                                                           .langaugeModel
                                                           .result?[position]
                                                           .name ??
                                                       "",
-                                                  "ByLanguage",
-                                                );
-                                              },
+                                                  textalign: TextAlign.center,
+                                                  fontsizeNormal: 13,
+                                                  fontsizeWeb: 14,
+                                                  multilanguage: false,
+                                                  maxline: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  fontweight: FontWeight.w500,
+                                                  fontstyle: FontStyle.normal,
+                                                ),
+                                                MyImage(
+                                                  width: 13,
+                                                  height: 13,
+                                                  color: otherColor,
+                                                  imagePath: "ic_right.png",
+                                                ),
+                                              ],
                                             ),
-                                          );*/
-                                        },
-                                        child: SizedBox(
-                                          height: 47,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              MyText(
-                                                color: otherColor,
-                                                text: findProvider
-                                                        .langaugeModel
-                                                        .result?[position]
-                                                        .name ??
-                                                    "",
-                                                textalign: TextAlign.center,
-                                                fontsizeNormal: 13,
-                                                fontsizeWeb: 14,
-                                                multilanguage: false,
-                                                maxline: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                fontweight: FontWeight.w500,
-                                                fontstyle: FontStyle.normal,
-                                              ),
-                                              MyImage(
-                                                width: 13,
-                                                height: 13,
-                                                color: otherColor,
-                                                imagePath: "ic_right.png",
-                                              ),
-                                            ],
                                           ),
                                         ),
                                       ),
@@ -490,32 +588,41 @@ class FindState extends State<Find> {
                               ),
                               Visibility(
                                 visible: findProvider.isLangSeeMore,
-                                child: InkWell(
-                                  onTap: () {
-                                    final findProvider =
-                                        Provider.of<FindProvider>(context,
-                                            listen: false);
-                                    findProvider.setLangSeeMore(false);
-                                    findProvider.setLanguageListSize(
-                                        findProvider
-                                                .langaugeModel.result?.length ??
-                                            0);
+                                child: Actions(
+                                  actions: <Type, Action<Intent>>{
+                                    UpButtonIntent:CallbackAction<UpButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode3?[4],isPrv: false))
                                   },
-                                  child: Container(
-                                    height: 30,
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 20),
-                                    alignment: Alignment.centerLeft,
-                                    child: MyText(
-                                      color: primaryColor,
-                                      text: "seemore",
-                                      textalign: TextAlign.center,
-                                      fontsizeNormal: 14,
-                                      multilanguage: true,
-                                      maxline: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      fontweight: FontWeight.w500,
-                                      fontstyle: FontStyle.normal,
+                                  child: FocusBase(
+                                    onPressed: () {
+                                      final findProvider =
+                                          Provider.of<FindProvider>(context,
+                                              listen: false);
+                                      findProvider.setLangSeeMore(false);
+                                      findProvider.setLanguageListSize(
+                                          findProvider
+                                                  .langaugeModel.result?.length ??
+                                              0);
+                                    },
+                                    onFocus: (sta ) {  },
+                                    focusNodeNew: focusNode5,
+                                    focusColor: Colors.grey.withOpacity(0.2),
+                                    child: Container(
+                                      height: 30,
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
+                                      alignment: Alignment.centerLeft,
+                                      child: MyText(
+                                        color: primaryColor,
+                                        text: "seemore",
+                                        textalign: TextAlign.center,
+                                        fontsizeNormal: 14,
+                                        fontsizeWeb: 20,
+                                        multilanguage: true,
+                                        maxline: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontweight: FontWeight.w500,
+                                        fontstyle: FontStyle.normal,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -541,6 +648,46 @@ class FindState extends State<Find> {
     );
   }
 
+  FocusNode ?focusNode ;
+  FocusNode ?focusNode1 ;
+  FocusNode ?focusNode2 ;
+  FocusNode ?focusNode3 ;
+  FocusNode ?focusNode4 ;
+  FocusNode ?focusNode5 ;
+
+  setFirstFocus(BuildContext context){
+    if(focusNode1 == null){
+      focusNode1 = FocusNode();
+      focusNode = FocusNode();
+      focusNode2 = FocusNode();
+      focusNode3 = FocusNode();
+      focusNode4 = FocusNode();
+      focusNode5 = FocusNode();
+      FocusScope.of(context).requestFocus(focusNode);
+    }
+  }
+
+  changeFocus(BuildContext context,FocusNode? node,{bool isPrv = false}){
+    if(node != null){
+      FocusScope.of(context).requestFocus(node);
+      setState(() {});
+    }else if(isPrv){
+      FocusScope.of(context).previousFocus();
+      setState(() {
+
+      });
+    }else{
+      FocusScope.of(context).nextFocus();
+
+      setState(() {
+
+      });
+    }
+  }
+
+
+
+
   Widget searchBox() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -556,121 +703,190 @@ class FindState extends State<Find> {
           Radius.circular(5),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 50,
-            height: MediaQuery.of(context).size.width,
-            alignment: Alignment.center,
-            child: MyImage(
-              width: 20,
-              height: 20,
-              imagePath: "ic_find.png",
-              color: white,
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              alignment: Alignment.center,
-              child: TextField(
-                onSubmitted: (value) async {
-                  log("value ====> $value");
-                  if (value.isNotEmpty) {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return Search(
-                            searchText: value.toString(),
-                          );
-                        },
-                      ),
-                    );
-                    setState(() {
-                      searchController.clear();
-                    });
-                  }
+      child: Shortcuts(
+        shortcuts:<ShortcutActivator, Intent> {
+          LogicalKeySet(LogicalKeyboardKey.arrowLeft):LeftButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowRight):RightButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowDown):DownButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowUp):UpButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.select):EnterButtonIntent(),
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Actions(
+              actions: <Type, Action<Intent>>{
+                RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode1)),
+                LeftButtonIntent:CallbackAction<LeftButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode3)),
+                // UButtonIntent:CallbackAction<LeftButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode3)),
+                // DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode?[0])),
+              },
+              child: FocusBase(
+                focusNodeNew: focusNode,
+                onPressed: () async {
                 },
-                cursorColor: primaryLight,
-                onChanged: (value) async {},
-                textInputAction: TextInputAction.done,
-                obscureText: false,
-                controller: searchController,
-                keyboardType: TextInputType.text,
-                maxLines: 1,
-                style: const TextStyle(
-                  color: white,
-                  fontSize: 15,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w500,
-                ),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  filled: true,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  hintStyle: TextStyle(
-                    color: otherColor,
-                    fontSize: 15,
-                    overflow: TextOverflow.ellipsis,
-                    fontWeight: FontWeight.w500,
+                // focusNodeNew: focusNode2,
+                onFocus: (sta){},
+                focusColor: Colors.grey.withOpacity(0.2),
+                child: Container(
+                  width: 50,
+                  height: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: MyImage(
+                    width: 20,
+                    height: 20,
+                    imagePath: "ic_find.png",
+                    color: white,
                   ),
-                  hintText: searchHint,
                 ),
-
               ),
             ),
-          ),
-          Consumer<FindProvider>(
-            builder: (context, findProvider, child) {
-              if (searchController.text.toString().isNotEmpty) {
-                return InkWell(
-                  borderRadius: BorderRadius.circular(5),
-                  onTap: () async {
-                    debugPrint("Click on Clear!");
-                    searchController.clear();
-                    setState(() {});
-                  },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    padding: const EdgeInsets.all(15),
-                    alignment: Alignment.center,
-                    child: MyImage(
-                      imagePath: "ic_close.png",
+            Expanded(
+              child: Actions(
+                actions: <Type, Action<Intent>>{
+                  RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode3)),
+                  LeftButtonIntent:CallbackAction<LeftButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode)),
+                  // DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode?[0])),
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  alignment: Alignment.center,
+                  child: TextField(
+                    onSubmitted: (value) async {
+                      log("value ====> $value");
+                      if (value.isNotEmpty) {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return Search(
+                                searchText: value.toString(),
+                              );
+                            },
+                          ),
+                        );
+                        setState(() {
+                          searchController.clear();
+                        });
+                      }
+                    },
+                    focusNode: focusNode1,
+                    cursorColor: primaryLight,
+                    onChanged: (value) async {},
+                    textInputAction: TextInputAction.done,
+                    obscureText: false,
+                    controller: searchController,
+                    keyboardType: TextInputType.text,
+                    maxLines: 1,
+                    style: const TextStyle(
                       color: white,
-                      fit: BoxFit.fill,
+                      fontSize: 15,
+                      overflow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.w500,
                     ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      filled: true,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      hintStyle: TextStyle(
+                        color: otherColor,
+                        fontSize: 15,
+                        overflow: TextOverflow.ellipsis,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      hintText: searchHint,
+                    ),
+
                   ),
-                );
-              } else {
-                return InkWell(
-                  borderRadius: BorderRadius.circular(5),
-                  onTap: () async {
-                    debugPrint("Click on Microphone!");
-                    _startListening();
-                  },
-                  child: _isListening
-                      ? AvatarGlow(
-                          glowColor: primaryColor,
-                          endRadius: 25,
-                          duration: const Duration(milliseconds: 2000),
-                          repeat: true,
-                          showTwoGlows: true,
-                          repeatPauseDuration:
-                              const Duration(milliseconds: 100),
-                          child: Material(
-                            elevation: 5,
-                            color: transparentColor,
-                            shape: const CircleBorder(),
-                            child: Container(
+                ),
+              ),
+            ),
+            Consumer<FindProvider>(
+              builder: (context, findProvider, child) {
+                if (searchController.text.toString().isNotEmpty) {
+                  return Actions(
+                    actions: <Type, Action<Intent>>{
+                      RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,null))
+                    },
+                    child: FocusBase(
+                      // borderRadius: BorderRadius.circular(5),
+                      onPressed: () async {
+                        debugPrint("Click on Clear!");
+                        searchController.clear();
+                        setState(() {});
+                      },
+                      focusNodeNew: focusNode2,
+                      onFocus: (sta){},
+                      focusColor: Colors.grey.withOpacity(0.2),
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        padding: const EdgeInsets.all(15),
+                        alignment: Alignment.center,
+                        child: MyImage(
+                          imagePath: "ic_close.png",
+                          color: white,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                else if(int.parse(Constant.androidAPILevel) > 30){
+                  return Actions(
+                    actions: <Type, Action<Intent>>{
+                      RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,null)),
+                      // DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode?[0])),
+                    },
+                    child: FocusBase(
+                      // borderRadius: BorderRadius.circular(5),
+                      onPressed: () async {
+                        debugPrint("Click on Microphone!");
+
+                        try{
+                          _startListening();
+                        }catch(e){
+                          showInSnackBar(context,(e??"Click on Microphone!").toString());
+                        }
+
+
+                      },
+                      focusNodeNew: focusNode3,
+                      focusColor: Colors.grey.withOpacity(0.2),
+                      onFocus: (sta){},
+                      child: _isListening
+                          ? AvatarGlow(
+                              glowColor: primaryColor,
+                              endRadius: 25,
+                              duration: const Duration(milliseconds: 2000),
+                              repeat: true,
+                              showTwoGlows: true,
+                              repeatPauseDuration:
+                                  const Duration(milliseconds: 100),
+                              child: Material(
+                                elevation: 5,
+                                color: transparentColor,
+                                shape: const CircleBorder(),
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  color: transparentColor,
+                                  padding: const EdgeInsets.all(15),
+                                  alignment: Alignment.center,
+                                  child: MyImage(
+                                    imagePath: "ic_voice.png",
+                                    color: white,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
                               width: 50,
                               height: 50,
-                              color: transparentColor,
                               padding: const EdgeInsets.all(15),
                               alignment: Alignment.center,
                               child: MyImage(
@@ -679,25 +895,53 @@ class FindState extends State<Find> {
                                 fit: BoxFit.fill,
                               ),
                             ),
-                          ),
-                        )
-                      : Container(
-                          width: 50,
-                          height: 50,
-                          padding: const EdgeInsets.all(15),
-                          alignment: Alignment.center,
-                          child: MyImage(
-                            imagePath: "ic_voice.png",
-                            color: white,
-                            fit: BoxFit.fill,
-                          ),
+                    ),
+                  );
+                }else{
+                  return Actions(
+                    actions: <Type, Action<Intent>>{
+                      RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,null))
+                    },
+                    child: FocusBase(
+                      // borderRadius: BorderRadius.circular(5),
+                      onPressed: () async {
+                        debugPrint("Click on Clear!");
+                        searchController.clear();
+                        setState(() {});
+                      },
+                      focusNodeNew: focusNode2,
+                      onFocus: (sta){},
+                      focusColor: Colors.grey.withOpacity(0.2),
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        padding: const EdgeInsets.all(15),
+                        alignment: Alignment.center,
+                        child: MyImage(
+                          imagePath: "ic_close.png",
+                          color: white,
+                          fit: BoxFit.fill,
                         ),
-                );
-              }
-            },
-          ),
-        ],
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  static void showInSnackBar(BuildContext context, String value) {
+
+    Flushbar(
+      //  title:  "Hey SuperHero",
+      message: value,
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 6),
+    )..show(context);
+  }
+
 }

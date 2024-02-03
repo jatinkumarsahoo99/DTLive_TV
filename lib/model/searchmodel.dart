@@ -74,7 +74,7 @@ class Tvshow {
   String? landscape;
   int? view;
   dynamic imdbRating;
-  int? status;
+  String? status;
   String? isTitle;
   String? releaseDate;
   int? isPremium;
@@ -152,7 +152,7 @@ class Tvshow {
         releaseDate: json["release_date"],
         view: json["view"],
         imdbRating: json["imdb_rating"],
-        status: json["status"],
+        status: (json["status"]??"").toString(),
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
         directorId: json["director_id"],

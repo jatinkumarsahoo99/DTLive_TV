@@ -189,16 +189,16 @@ class TVHomeState extends State<TVHome> {
                         children: [
                           /* Continue Watching */
                           (sectionDataProvider
-                                      .sectionListModel.continueWatching !=
-                                  null)
+                              .sectionListModel.continueWatching !=
+                              null)
                               ? continueWatchingLayout(sectionDataProvider
-                                  .sectionListModel.continueWatching)
+                              .sectionListModel.continueWatching)
                               : const SizedBox.shrink(),
 
                           /* Remaining Sections */
                           (sectionDataProvider.sectionListModel.result != null)
                               ? setSectionByType(
-                                  sectionDataProvider.sectionListModel.result)
+                              sectionDataProvider.sectionListModel.result)
                               : const SizedBox.shrink(),
                         ],
                       );

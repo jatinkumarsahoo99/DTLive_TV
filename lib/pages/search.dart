@@ -13,10 +13,15 @@ import 'package:dtlive/widget/mytext.dart';
 import 'package:dtlive/widget/nodata.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
+import '../utils/constant.dart';
+import '../widget/focusbase.dart';
+import 'KeyBoardIntentFile.dart';
 
 class Search extends StatefulWidget {
   final String? searchText;
@@ -39,28 +44,49 @@ class SearchState extends State<Search> {
     searchProvider = Provider.of<SearchProvider>(context, listen: false);
     searchController.text = widget.searchText ?? "";
     _getData();
+    Utils.getAndroidAPILevel().then((value) {
+      Constant.androidAPILevel = value;
+      setState(() {
+
+      });
+    });
     super.initState();
   }
 
   /// This has to happen only once per app
   void _initSpeech() async {
-    speechEnabled = await _speechToText.initialize();
-    setState(() {});
+    try{
+      speechEnabled = await _speechToText.initialize();
+      setState(() {});
+    }catch(e){
+      if (kDebugMode) {
+        print(">>>>>>$e");
+      }
+    }
+
   }
 
   /// Each time to start a speech recognition session
   void _startListening() async {
-    debugPrint("<============== _startListening ==============>");
-    await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {
-      _isListening = true;
-    });
-    Future.delayed(const Duration(seconds: 5), () {
-      if (searchController.text.toString().isEmpty) {
-        Utils.showSnackbar(context, "info", "speechnotavailable", true);
-        _stopListening();
+    try {
+      debugPrint("<============== _startListening ==============>");
+      await _speechToText.listen(onResult: _onSpeechResult);
+      setState(() {
+        _isListening = true;
+      });
+      Future.delayed(const Duration(seconds: 5), () {
+        if (searchController.text
+            .toString()
+            .isEmpty) {
+          Utils.showSnackbar(context, "info", "speechnotavailable", true);
+          _stopListening();
+        }
+      });
+    }catch(e){
+      if (kDebugMode) {
+        print(">>>>>>$e");
       }
-    });
+    }
   }
 
   /// Manually stop the active speech recognition session
@@ -135,11 +161,15 @@ class SearchState extends State<Search> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: InkWell(
-                                  onTap: () {
+                                child: FocusBase(
+                                  onPressed: () {
                                     searchProvider.setDataVisibility(
                                         true, false);
                                   },
+
+                                  onFocus: (sta ) {  },
+                                  focusColor: Colors.grey.withOpacity(0.2),
+                                  focusNodeNew: focusNode4,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -175,11 +205,14 @@ class SearchState extends State<Search> {
                                 ),
                               ),
                               Expanded(
-                                child: InkWell(
-                                  onTap: () {
+                                child: FocusBase(
+                                  onPressed: () {
                                     searchProvider.setDataVisibility(
                                         false, true);
                                   },
+                                  onFocus: (sta ) {  },
+                                  focusColor: Colors.grey.withOpacity(0.2),
+                                  focusNodeNew: focusNode5,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -236,6 +269,43 @@ class SearchState extends State<Search> {
     );
   }
 
+  FocusNode ?focusNode ;
+  FocusNode ?focusNode1 ;
+  FocusNode ?focusNode2 ;
+  FocusNode ?focusNode3 ;
+  FocusNode ?focusNode4 ;
+  FocusNode ?focusNode5 ;
+
+  setFirstFocus(BuildContext context){
+    if(focusNode1 == null){
+      focusNode1 = FocusNode();
+      focusNode = FocusNode();
+      focusNode2 = FocusNode();
+      focusNode3 = FocusNode();
+      focusNode4 = FocusNode();
+      focusNode5 = FocusNode();
+      FocusScope.of(context).requestFocus(focusNode);
+    }
+  }
+
+  changeFocus(BuildContext context,FocusNode? node,{bool isPrv = false}){
+    if(node != null){
+      FocusScope.of(context).requestFocus(node);
+      setState(() {});
+    }else if(isPrv){
+      FocusScope.of(context).previousFocus();
+      setState(() {
+
+      });
+    }else{
+      FocusScope.of(context).nextFocus();
+
+      setState(() {
+
+      });
+    }
+  }
+
   Widget searchBox() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -249,112 +319,178 @@ class SearchState extends State<Search> {
         ),
         borderRadius: BorderRadius.circular(5),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          InkWell(
-            borderRadius: BorderRadius.circular(5),
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Container(
-              width: 50,
-              height: MediaQuery.of(context).size.width,
-              alignment: Alignment.center,
-              child: MyImage(
-                width: 16,
-                height: 16,
-                imagePath: "back.png",
-                color: black,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              alignment: Alignment.center,
-              child: TextField(
-                onChanged: (value) async {
-                  if (value.isNotEmpty) {
-                    await searchProvider.setLoading(true);
-                    await searchProvider.getSearchVideo(value.toString());
-                  }
+      child: Shortcuts(
+        shortcuts:<ShortcutActivator, Intent> {
+          LogicalKeySet(LogicalKeyboardKey.arrowLeft):LeftButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowRight):RightButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowDown):DownButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowUp):UpButtonIntent(),
+          LogicalKeySet(LogicalKeyboardKey.select):EnterButtonIntent(),
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Actions(
+              actions: <Type, Action<Intent>>{
+                RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode1)),
+                LeftButtonIntent:CallbackAction<LeftButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode3)),
+                // UButtonIntent:CallbackAction<LeftButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode3)),
+                // DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode?[0])),
+              },
+              child: FocusBase(
+                // borderRadius: BorderRadius.circular(5),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
-                textInputAction: TextInputAction.done,
-                obscureText: false,
-                controller: searchController,
-                keyboardType: TextInputType.text,
-                maxLines: 1,
-                style: const TextStyle(
-                  color: black,
-                  fontSize: 16,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w500,
-                ),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  filled: true,
-                  fillColor: transparentColor,
-                  hintStyle: TextStyle(
-                    color: otherColor,
-                    fontSize: 15,
-                    overflow: TextOverflow.ellipsis,
-                    fontWeight: FontWeight.w500,
+                focusNodeNew: focusNode,
+                focusColor: Colors.grey.withOpacity(0.2),
+                onFocus: (isFocused) {},
+                child: Container(
+                  width: 50,
+                  height: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: MyImage(
+                    width: 16,
+                    height: 16,
+                    imagePath: "back.png",
+                    color: black,
                   ),
-                  hintText: searchHint,
                 ),
               ),
             ),
-          ),
-          Consumer<SearchProvider>(
-            builder: (context, searchProvider, child) {
-              if (searchController.text.toString().isNotEmpty) {
-                return InkWell(
-                  borderRadius: BorderRadius.circular(5),
-                  onTap: () async {
-                    debugPrint("Click on Clear!");
-                    searchController.clear();
-                    await searchProvider.clearProvider();
-                    await searchProvider.notifyProvider();
+            Actions(
+              actions: <Type, Action<Intent>>{
+                RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode3)),
+                LeftButtonIntent:CallbackAction<LeftButtonIntent>(onInvoke:(intent)=> changeFocus(context,focusNode)),
+                // DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode?[0])),
+              },
+              child: Expanded(
+                child: FocusBase(
+                  onPressed: () {
+                    // Navigator.pop(context);
+
                   },
+                  focusColor: Colors.grey.withOpacity(0.2),
+                  onFocus: (isFocused) {},
                   child: Container(
-                    width: 50,
-                    height: 50,
-                    padding: const EdgeInsets.all(15),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
                     alignment: Alignment.center,
-                    child: MyImage(
-                      imagePath: "ic_close.png",
-                      color: black,
-                      fit: BoxFit.fill,
+                    child: TextField(
+                      onChanged: (value) async {
+                        if (value.isNotEmpty) {
+                          await searchProvider.setLoading(true);
+                          await searchProvider.getSearchVideo(value.toString());
+                        }
+                      },
+                      textInputAction: TextInputAction.done,
+                      obscureText: false,
+                      focusNode: focusNode1,
+                      controller: searchController,
+                      keyboardType: TextInputType.text,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        color: black,
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: transparentColor,
+                        hintStyle: TextStyle(
+                          color: otherColor,
+                          fontSize: 15,
+                          overflow: TextOverflow.ellipsis,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        hintText: searchHint,
+                      ),
                     ),
                   ),
-                );
-              } else {
-                return InkWell(
-                  borderRadius: BorderRadius.circular(5),
-                  onTap: () async {
-                    debugPrint("Click on Microphone!");
-                    _startListening();
-                  },
-                  child: _isListening
-                      ? AvatarGlow(
-                          glowColor: primaryLight,
-                          endRadius: 25,
-                          duration: const Duration(milliseconds: 2000),
-                          repeat: true,
-                          showTwoGlows: true,
-                          repeatPauseDuration:
-                              const Duration(milliseconds: 100),
-                          child: Material(
-                            elevation: 5,
-                            color: transparentColor,
-                            shape: const CircleBorder(),
-                            child: Container(
+                ),
+              ),
+            ),
+            Consumer<SearchProvider>(
+              builder: (context, searchProvider, child) {
+                if (searchController.text.toString().isNotEmpty) {
+                  return Actions(
+                    actions: <Type, Action<Intent>>{
+                      RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,null))
+                    },
+                    child: FocusBase(
+                      // borderRadius: BorderRadius.circular(5),
+                      onPressed: () async {
+                        debugPrint("Click on Clear!");
+                        searchController.clear();
+                        await searchProvider.clearProvider();
+                        await searchProvider.notifyProvider();
+                        focusNode1?.requestFocus();
+                        setState(() {});
+                      },
+                      focusColor: Colors.grey.withOpacity(0.2),
+                      onFocus: (isFocused) {},
+                      focusNodeNew: focusNode2,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        padding: const EdgeInsets.all(15),
+                        alignment: Alignment.center,
+                        child: MyImage(
+                          imagePath: "ic_close.png",
+                          color: black,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                  );
+                } else if(int.parse(Constant.androidAPILevel) > 30) {
+                  return Actions(
+                    actions: <Type, Action<Intent>>{
+                      RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,null)),
+                      // DownButtonIntent:CallbackAction<DownButtonIntent>(onInvoke:(intent)=> changeFocus(context,lstFocusNode?[0])),
+                    },
+                    child: FocusBase(
+                      // borderRadius: BorderRadius.circular(5),
+                      onPressed: () async {
+                        debugPrint("Click on Microphone!");
+                        _startListening();
+                      },
+                      focusColor: Colors.grey.withOpacity(0.2),
+                      focusNodeNew: focusNode3,
+                      onFocus: (isFocused) {},
+                      child: _isListening
+                          ? AvatarGlow(
+                              glowColor: primaryLight,
+                              endRadius: 25,
+                              duration: const Duration(milliseconds: 2000),
+                              repeat: true,
+                              showTwoGlows: true,
+                              repeatPauseDuration:
+                                  const Duration(milliseconds: 100),
+                              child: Material(
+                                elevation: 5,
+                                color: transparentColor,
+                                shape: const CircleBorder(),
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  color: transparentColor,
+                                  padding: const EdgeInsets.all(15),
+                                  alignment: Alignment.center,
+                                  child: MyImage(
+                                    imagePath: "ic_voice.png",
+                                    color: black,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
                               width: 50,
                               height: 50,
-                              color: transparentColor,
                               padding: const EdgeInsets.all(15),
                               alignment: Alignment.center,
                               child: MyImage(
@@ -363,24 +499,44 @@ class SearchState extends State<Search> {
                                 fit: BoxFit.fill,
                               ),
                             ),
-                          ),
-                        )
-                      : Container(
-                          width: 50,
-                          height: 50,
-                          padding: const EdgeInsets.all(15),
-                          alignment: Alignment.center,
-                          child: MyImage(
-                            imagePath: "ic_voice.png",
-                            color: black,
-                            fit: BoxFit.fill,
-                          ),
+                    ),
+                  );
+                }else{
+                  return Actions(
+                    actions: <Type, Action<Intent>>{
+                      RightButtonIntent:CallbackAction<RightButtonIntent>(onInvoke:(intent)=> changeFocus(context,null))
+                    },
+                    child: FocusBase(
+                      // borderRadius: BorderRadius.circular(5),
+                      onPressed: () async {
+                        debugPrint("Click on Clear!");
+                        searchController.clear();
+                        await searchProvider.clearProvider();
+                        await searchProvider.notifyProvider();
+                        focusNode1?.requestFocus();
+                        setState(() {});
+                      },
+                      focusColor: Colors.grey.withOpacity(0.2),
+                      onFocus: (isFocused) {},
+                      focusNodeNew: focusNode2,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        padding: const EdgeInsets.all(15),
+                        alignment: Alignment.center,
+                        child: MyImage(
+                          imagePath: "ic_close.png",
+                          color: black,
+                          fit: BoxFit.fill,
                         ),
-                );
-              }
-            },
-          ),
-        ],
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -403,9 +559,9 @@ class SearchState extends State<Search> {
               itemBuilder: (BuildContext context, int position) {
                 return Material(
                   type: MaterialType.transparency,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(4),
-                    onTap: () {
+                  child: FocusBase(
+                    // borderRadius: BorderRadius.circular(4),
+                    onPressed: () {
                       log("Clicked on position ==> $position");
                       Utils.openDetails(
                         context: context,
@@ -420,6 +576,8 @@ class SearchState extends State<Search> {
                             0,
                       );
                     },
+                    onFocus: (sta ) {  },
+                    focusColor: Colors.grey.withOpacity(0.2),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: Dimens.heightLand,
@@ -470,8 +628,8 @@ class SearchState extends State<Search> {
               itemBuilder: (BuildContext context, int position) {
                 return Material(
                   type: MaterialType.transparency,
-                  child: InkWell(
-                    onTap: () {
+                  child: FocusBase(
+                    onPressed: () {
                       log("Clicked on position ==> $position");
                       Utils.openDetails(
                         context: context,
@@ -487,6 +645,8 @@ class SearchState extends State<Search> {
                             0,
                       );
                     },
+                    onFocus: (sta ) {  },
+                    focusColor: Colors.grey.withOpacity(0.2),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: Dimens.heightLand,
