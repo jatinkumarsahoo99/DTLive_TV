@@ -208,6 +208,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
           ),
         );
       },
+
     );
     _videoPlayerController.addListener(() {
       playerCPosition =
@@ -291,6 +292,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
       });
     }
   }
+  FocusNode playerFocus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -301,8 +303,46 @@ class _PlayerVideoState extends State<PlayerVideo> {
         body: SafeArea(
           child: Stack(
             children: [
-              Center(
-                child: _buildPage(),
+              RawKeyboardListener(
+                focusNode: playerFocus,
+                // autofocus: true,
+                onKey: (RawKeyEvent event) {
+                  if (event is RawKeyDownEvent) {
+                    if ((event.logicalKey == LogicalKeyboardKey.mediaPlayPause)  ||
+                        (event.logicalKey == LogicalKeyboardKey.mediaPause)  || (event.logicalKey == LogicalKeyboardKey.mediaPlay) ||
+                        (event.logicalKey == LogicalKeyboardKey.mediaStop)) {
+                      print(">>>>>>>>>>>button pressed");
+                      if (_videoPlayerController.value.isPlaying) {
+                        _videoPlayerController.pause();
+                      } else {
+                        _videoPlayerController.play();
+                      }
+                      // return KeyEventResult.handled;
+                    }
+                    else if ((event.logicalKey == LogicalKeyboardKey.mediaFastForward) || (event.logicalKey == LogicalKeyboardKey.arrowRight)) {
+                      _videoPlayerController.seekTo(Duration(seconds: _videoPlayerController.value.position.inSeconds + 10));
+                      print(">>>>>>>>>>>button pressed");
+                      // return KeyEventResult.handled;
+                    } else if ((event.logicalKey == LogicalKeyboardKey.mediaRewind) || (event.logicalKey == LogicalKeyboardKey.arrowLeft)) {
+                      _videoPlayerController.seekTo(Duration(seconds: _videoPlayerController.value.position.inSeconds - 10));
+                      print(">>>>>>>>>>>button pressed");
+                      // return KeyEventResult.handled;
+                    }else if (event.logicalKey == LogicalKeyboardKey.audioVolumeDown) {
+                      _videoPlayerController.setVolume(_videoPlayerController.value.volume - 0.1);
+                      // return KeyEventResult.handled;
+                    } else if (event.logicalKey == LogicalKeyboardKey.audioVolumeUp) {
+                      _videoPlayerController.setVolume(_videoPlayerController.value.volume + 0.1);
+                      // return KeyEventResult.handled;
+                    } else if (event.logicalKey == LogicalKeyboardKey.audioVolumeMute) {
+                      _videoPlayerController.setVolume(_videoPlayerController.value.volume == 0 ? 1.0 : 0.0);
+                      // return KeyEventResult.handled;
+                    }
+                  }
+                  // return KeyEventResult.ignored;
+                },
+                child: Center(
+                  child: _buildPage(),
+                ),
               ),
               if (!kIsWeb)
                 Positioned(

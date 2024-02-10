@@ -590,7 +590,7 @@ class SearchState extends State<Search> {
                                   .searchModel.video?[position].landscape
                                   .toString() ??
                               "",
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           imgHeight: MediaQuery.of(context).size.height,
                           imgWidth: MediaQuery.of(context).size.width,
                         ),
