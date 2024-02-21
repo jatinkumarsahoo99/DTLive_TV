@@ -2,9 +2,10 @@ import 'package:dtlive/model/subtitlemodel.dart';
 
 class Constant {
   static const String baseurl = 'https://liveiptv.co.in/panel/public/api/';
+  // static const String baseurl = 'https://rangolimala.com/panel/public/api/';
 
-  static String? appName = "DTLive";
-  static String? appPackageName = "com.divinetechs.dtlivetv";
+  static String? appName = "RangoliMala";
+  static String? appPackageName = "com.rangolimama.rangoliTV";
   static String? appleAppId = "6449380090";
   static num androidVersion = 1;
   static num iosVersion = 1;

@@ -96,6 +96,8 @@ dependencies:
   another_flushbar:
 #  player_video:
   google_mobile_ads:
+  flutter_launcher_icons:
+#  flutter_vlc_player:
 #  flutter_vlc_player: ^7.4.0
 #  appinio_video_player: ^1.2.2
 #  meedu_player: ^0.5.0-nullsafety.0
@@ -114,6 +116,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/appicon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

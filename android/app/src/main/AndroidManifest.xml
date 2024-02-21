@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.divinetechs.dtlivetv">
+    package="com.rangolimama.rangoliTV">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -26,9 +26,9 @@
         android:required="true" />
 
    <application
-        android:label="@string/app_name"
+        android:label="RangoliMala TV"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:banner="@drawable/banner"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"

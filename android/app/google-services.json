@@ -101,7 +101,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:346606981660:android:7d3282d89ca1e59e2fc5d9",
         "android_client_info": {
-          "package_name": "com.divinetechs.dtlivetv"
+          "package_name": "com.rangolimama.rangoliTV"
         }
       },
       "oauth_client": [
@@ -109,7 +109,7 @@
           "client_id": "346606981660-9cfi2earlbkdgjquq93n61k87nq8n7vf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.divinetechs.dtlivetv",
+            "package_name": "com.rangolimama.rangoliTV",
             "certificate_hash": "b2ad25da721d05cb81f45e61e26d645332b23599"
           }
         },
@@ -117,7 +117,7 @@
           "client_id": "346606981660-nerfgdq1elpf0ghjledhdcl5d8ucvr7k.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.divinetechs.dtlivetv",
+            "package_name": "com.rangolimama.rangoliTV",
             "certificate_hash": "f3d3bf6e90780dd7e3b416d23c24c2c99504afbb"
           }
         },
@@ -125,7 +125,7 @@
           "client_id": "346606981660-o8cmkm6nuk86sgd6es0u5j7japef7vpj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.divinetechs.dtlivetv",
+            "package_name": "com.rangolimama.rangoliTV",
             "certificate_hash": "2225beda9471e48d9bd29a6f679e0317cf09b3a6"
           }
         },

@@ -68,7 +68,7 @@ class DefaultFirebaseOptions {
     storageBucket: 'primevideoapp-43bf6.appspot.com',
     androidClientId: '346606981660-150eiiccap50sdco81aaj0av5lgn59us.apps.googleusercontent.com',
     iosClientId: '346606981660-jt9e6v5da165b15vh3qq141tvgjtq62e.apps.googleusercontent.com',
-    iosBundleId: 'com.divinetechs.dtlivetv',
+    iosBundleId: 'com.rangolimama.rangoliTV',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -79,6 +79,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'primevideoapp-43bf6.appspot.com',
     androidClientId: '346606981660-150eiiccap50sdco81aaj0av5lgn59us.apps.googleusercontent.com',
     iosClientId: '346606981660-jt9e6v5da165b15vh3qq141tvgjtq62e.apps.googleusercontent.com',
-    iosBundleId: 'com.divinetechs.dtlivetv',
+    iosBundleId: 'com.rangolimama.rangoliTV',
   );
 }

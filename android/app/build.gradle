@@ -54,15 +54,15 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.divinetechs.dtlivetv"
+        applicationId "com.rangolimama.rangoliTV"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 18
         versionName '1.0.18'
         multiDexEnabled true
-        ndk {
+        /*ndk {
             abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'mips', 'mips64', 'arm64-v8a'
-        }
+        }*/
     }
     signingConfigs {
         release {
