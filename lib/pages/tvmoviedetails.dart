@@ -1052,6 +1052,7 @@ class TVMovieDetailsState extends State<TVMovieDetails> {
           focusColor: white,
           onFocus: (isFocused) {},
           onPressed: () async {
+            print("I am in wright place vUploadType");
             openPlayer("Video");
           },
           child: Container(

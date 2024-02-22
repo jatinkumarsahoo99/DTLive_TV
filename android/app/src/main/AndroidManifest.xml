@@ -36,6 +36,7 @@
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
         android:hardwareAccelerated="true"
+        android:networkSecurityConfig="@xml/network_config"
         android:theme="@style/Theme.Leanback">
 
 

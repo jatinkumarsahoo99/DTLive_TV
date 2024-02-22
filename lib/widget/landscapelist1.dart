@@ -132,7 +132,8 @@ class _LandscapeList1State extends State<LandscapeList1> {
                 },
               ),
             );
-          } else {
+          }
+          else {
             await Navigator.push(
               context,
               MaterialPageRoute(
@@ -150,7 +151,8 @@ class _LandscapeList1State extends State<LandscapeList1> {
                       "",
                       sectionBannerList?[index].thumbnail ?? "",
                     );
-                  } else if ((sectionBannerList?[index].video320 ?? "")
+                  }
+                  else if ((sectionBannerList?[index].video320 ?? "")
                       .contains("vimeo")) {
                     return PlayerVimeo(
                       "Channel",
@@ -163,7 +165,9 @@ class _LandscapeList1State extends State<LandscapeList1> {
                       "",
                       sectionBannerList?[index].thumbnail ?? "",
                     );
-                  } else {
+                  }
+                  else {
+                    print("I am in wright place");
                     return PlayerPod(
                       "Channel",
                       0,
@@ -180,7 +184,8 @@ class _LandscapeList1State extends State<LandscapeList1> {
               ),
             );
           }
-        } else {
+        }
+        else {
           if (kIsWeb || Constant.isTV) {
             Utils.showSnackbar(context, "info", webPaymentNotAvailable, false);
             return;

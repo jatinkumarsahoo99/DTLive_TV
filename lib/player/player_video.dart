@@ -319,6 +319,14 @@ class _PlayerVideoState extends State<PlayerVideo> {
                       }
                       // return KeyEventResult.handled;
                     }
+                    else if((event.logicalKey == LogicalKeyboardKey.pause) || (event.logicalKey == LogicalKeyboardKey.select)){
+                      print(">>>>>>>>>>>button pressed jks");
+                      if (_videoPlayerController.value.isPlaying) {
+                        _videoPlayerController.pause();
+                      } else {
+                        _videoPlayerController.play();
+                      }
+                    }
                     else if ((event.logicalKey == LogicalKeyboardKey.mediaFastForward) || (event.logicalKey == LogicalKeyboardKey.arrowRight)) {
                       _videoPlayerController.seekTo(Duration(seconds: _videoPlayerController.value.position.inSeconds + 10));
                       print(">>>>>>>>>>>button pressed");
