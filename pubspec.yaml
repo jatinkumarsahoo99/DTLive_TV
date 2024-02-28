@@ -96,10 +96,12 @@ dependencies:
   another_flushbar:
 #  player_video:
   google_mobile_ads:
+  wakelock:
 #  flutter_vlc_player: ^7.4.0
 #  appinio_video_player: ^1.2.2
 #  meedu_player: ^0.5.0-nullsafety.0
 #  flutter_meedu_media_kit: ^4.2.14
+
 
 dependency_overrides:
   webview_flutter_wkwebview: '3.5.0'

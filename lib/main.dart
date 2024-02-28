@@ -35,11 +35,13 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:wakelock/wakelock.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Locales.init(['en', 'ar', 'hi']);
+  Wakelock.enable();
 
   if (!kIsWeb) {
     //Remove this method to stop OneSignal Debugging
