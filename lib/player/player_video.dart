@@ -150,8 +150,10 @@ class _PlayerVideoState extends State<PlayerVideo> {
       looping: false,
       fullScreenByDefault: false,
       allowFullScreen: false,
+      maxScale: 3,
+      // allowMuting: false,
       // showControlsOnInitialize: true,
-      hideControlsTimer: const Duration(days: 1),
+      hideControlsTimer: const Duration(days: 2),
       showControls: true,
       allowedScreenSleep: false,
       additionalOptions: (context) {
@@ -217,6 +219,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
           ),
         );
       },
+      customControls: const MaterialControls(),
 
     );
     _videoPlayerController.addListener(() {
@@ -319,6 +322,8 @@ class _PlayerVideoState extends State<PlayerVideo> {
                 (event.logicalKey == LogicalKeyboardKey.mediaStop) || (event.logicalKey == LogicalKeyboardKey.pause) ||
                 (event.logicalKey == LogicalKeyboardKey.select)) {
               print(">>>>>>>>>>>button pressed");
+              // _chewieController?.copyWith(showControls: false);
+              // _chewieController?.notifyListeners();
               if (_videoPlayerController.value.isPlaying) {
                 _videoPlayerController.pause();
               } else {

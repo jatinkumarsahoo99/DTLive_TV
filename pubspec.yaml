@@ -29,7 +29,7 @@ dependencies:
   # youtube_player_flutter: ^8.1.2
   youtube_player_iframe: ^4.0.4
   vimeo_video_player: ^0.0.10
-  video_player: ^2.7.0
+  video_player: ^2.8.1
 #  video_player_web_hls: ^1.0.0+3
   # Players
   image_picker: ^1.0.0
@@ -68,7 +68,7 @@ dependencies:
   path: ^1.8.2
   html: ^0.15.4
   social_share: ^2.3.1
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.1
   carousel_slider: ^4.2.1
   carousel_indicator: ^1.0.6
   scrollable_positioned_list: ^0.3.8

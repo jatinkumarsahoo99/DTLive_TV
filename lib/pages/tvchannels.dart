@@ -44,6 +44,7 @@ class TVChannelsState extends State<TVChannels> {
 
   @override
   void initState() {
+    print(">>>>>>>>>>>>channel call in jks1");
     channelSectionProvider =
         Provider.of<ChannelSectionProvider>(context, listen: false);
     super.initState();
@@ -356,6 +357,8 @@ class TVChannelsState extends State<TVChannels> {
 
   /* ========= Open Player ========= */
   openPlayer(List<banner.LiveUrl>? sectionBannerList, int index) async {
+    print(">>>>>>>>>>>>channel call in jks");
+    print(">>>>>>>>>>>>>>>>>video320${sectionBannerList?[index].link}");
     if (Constant.userID != null) {
       if ((sectionBannerList?[index].link ?? "").isNotEmpty) {
         if ((sectionBannerList?[index].isBuy ?? 0) == 1) {
@@ -393,7 +396,8 @@ class TVChannelsState extends State<TVChannels> {
                 },
               ),
             );
-          } else {
+          }
+          else {
             await Navigator.push(
               context,
               MaterialPageRoute(

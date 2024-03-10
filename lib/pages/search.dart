@@ -580,7 +580,7 @@ class SearchState extends State<Search> {
                     focusColor: Colors.grey.withOpacity(0.2),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      height: Dimens.heightLand,
+                      height: Dimens.heightLand1,
                       alignment: Alignment.center,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
@@ -649,7 +649,7 @@ class SearchState extends State<Search> {
                     focusColor: Colors.grey.withOpacity(0.2),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      height: Dimens.heightLand,
+                      height: Dimens.heightLand1,
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
@@ -662,7 +662,7 @@ class SearchState extends State<Search> {
                                   .landscape
                                   .toString() ??
                               "",
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           imgHeight: MediaQuery.of(context).size.height,
                           imgWidth: MediaQuery.of(context).size.width,
                         ),

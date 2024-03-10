@@ -96,6 +96,7 @@ class _TvChannelListState extends State<TvChannelList> {
   }
 
   openPlayer(List<Datum>? sectionBannerList, int index) async {
+    print(">>>>>>>>>>>>>>>>>video320${sectionBannerList?[index].video320}");
     if (Constant.userID != null) {
       // if ((sectionBannerList?[index].lin ?? "").isNotEmpty) {
         if ((sectionBannerList?[index].isBuy ?? 0) == 1) {
@@ -133,7 +134,8 @@ class _TvChannelListState extends State<TvChannelList> {
                 },
               ),
             );
-          } else {
+          }
+          else {
             await Navigator.push(
               context,
               MaterialPageRoute(

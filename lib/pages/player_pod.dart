@@ -66,6 +66,8 @@ class _PlayerPodState extends State<PlayerPod> {
       podPlayerConfig: const PodPlayerConfig(
         autoPlay: true,
         isLooping: false,
+        forcedVideoFocus: true,
+        wakelockEnabled: false,
         videoQualityPriority: [1080, 720, 360],
       ),
     );
@@ -128,14 +130,38 @@ class _PlayerPodState extends State<PlayerPod> {
           if (snapshot.connectionState == ConnectionState.done) {
             return RawKeyboardListener(
               focusNode: FocusNode(),
-              onKey: (RawKeyEvent key) {
-                if (key.logicalKey == LogicalKeyboardKey.arrowDown) {
+              onKey: (RawKeyEvent event) {
+                if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
                   f1.requestFocus();
                   Timer(Duration(),(){
                     setState(() {
 
                     });
                   });
+                }
+
+                if (event is RawKeyDownEvent) {
+                  if ((event.logicalKey == LogicalKeyboardKey.mediaPlayPause)  ||
+                      (event.logicalKey == LogicalKeyboardKey.mediaPause)  || (event.logicalKey == LogicalKeyboardKey.mediaPlay) ||
+                      (event.logicalKey == LogicalKeyboardKey.mediaStop) || (event.logicalKey == LogicalKeyboardKey.pause) ||
+                      (event.logicalKey == LogicalKeyboardKey.select)) {
+                    print(">>>>>>>>>>>button pressed");
+                    if (_controller.isVideoPlaying) {
+                      _controller.pause();
+                    } else {
+                      _controller.play();
+                    }
+                    // return KeyEventResult.handled;
+                  }
+                  else if (event.logicalKey == LogicalKeyboardKey.audioVolumeMute) {
+                    if(_controller.isMute){
+                      _controller.unMute();
+                    }else{
+                      _controller.mute();
+                    }
+
+                    // return KeyEventResult.handled;
+                  }
                 }
               },
               child: WillPopScope(
