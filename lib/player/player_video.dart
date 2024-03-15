@@ -1,6 +1,10 @@
 import 'dart:io';
 
-import 'package:chewie/chewie.dart';
+// import 'package:chewie/chewie.dart';
+import 'package:dtlive/packages/chewie/lib/src/chewie_player.dart';
+import 'package:dtlive/packages/chewie/lib/src/chewie_progress_colors.dart';
+import 'package:dtlive/packages/chewie/lib/src/cupertino/cupertino_controls.dart';
+import 'package:dtlive/packages/chewie/lib/src/material/material_controls.dart';
 import 'package:dtlive/provider/playerprovider.dart';
 import 'package:dtlive/utils/color.dart';
 import 'package:dtlive/utils/constant.dart';
@@ -16,6 +20,7 @@ import 'package:subtitle_wrapper_package/subtitle_wrapper_package.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
 
+import '../packages/chewie/lib/src/models/option_item.dart';
 import '../widget/focusbase.dart';
 
 class PlayerVideo extends StatefulWidget {
@@ -153,7 +158,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
       maxScale: 3,
       // allowMuting: false,
       // showControlsOnInitialize: true,
-      hideControlsTimer: const Duration(days: 2),
+      hideControlsTimer: const Duration(seconds: 4),
       showControls: true,
       allowedScreenSleep: false,
       additionalOptions: (context) {
@@ -219,7 +224,10 @@ class _PlayerVideoState extends State<PlayerVideo> {
           ),
         );
       },
-      customControls: const MaterialControls(),
+      customControls:  const CupertinoControls(
+        backgroundColor: Color.fromRGBO(41, 41, 41, 0.7),
+        iconColor: Color.fromARGB(255, 200, 200, 200),
+      ),
 
     );
     _videoPlayerController.addListener(() {
@@ -312,59 +320,10 @@ class _PlayerVideoState extends State<PlayerVideo> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: onBackPressed,
-      child: RawKeyboardListener(
-        focusNode: playerFocus,
-        autofocus: true,
-        onKey: (RawKeyEvent event) {
-          if (event is RawKeyDownEvent) {
-            if ((event.logicalKey == LogicalKeyboardKey.mediaPlayPause)  ||
-                (event.logicalKey == LogicalKeyboardKey.mediaPause)  || (event.logicalKey == LogicalKeyboardKey.mediaPlay) ||
-                (event.logicalKey == LogicalKeyboardKey.mediaStop) || (event.logicalKey == LogicalKeyboardKey.pause) ||
-                (event.logicalKey == LogicalKeyboardKey.select)) {
-              print(">>>>>>>>>>>button pressed");
-              // _chewieController?.copyWith(showControls: false);
-              // _chewieController?.notifyListeners();
-              if (_videoPlayerController.value.isPlaying) {
-                _videoPlayerController.pause();
-              } else {
-                _videoPlayerController.play();
-              }
-              // return KeyEventResult.handled;
-            }
-            /* else if((event.logicalKey == LogicalKeyboardKey.pause) || (event.logicalKey == LogicalKeyboardKey.select)){
-                      print(">>>>>>>>>>>button pressed jks");
-                      if (_videoPlayerController.value.isPlaying) {
-                        _videoPlayerController.pause();
-                      } else {
-                        _videoPlayerController.play();
-                      }
-                    }*/
-            else if ((event.logicalKey == LogicalKeyboardKey.mediaFastForward) || (event.logicalKey == LogicalKeyboardKey.arrowRight)) {
-              _videoPlayerController.seekTo(Duration(seconds: _videoPlayerController.value.position.inSeconds + 10));
-              print(">>>>>>>>>>>button pressed");
-              // return KeyEventResult.handled;
-            } else if ((event.logicalKey == LogicalKeyboardKey.mediaRewind) || (event.logicalKey == LogicalKeyboardKey.arrowLeft)) {
-              _videoPlayerController.seekTo(Duration(seconds: _videoPlayerController.value.position.inSeconds - 10));
-              print(">>>>>>>>>>>button pressed");
-              // return KeyEventResult.handled;
-            }else if (event.logicalKey == LogicalKeyboardKey.audioVolumeDown) {
-              _videoPlayerController.setVolume(_videoPlayerController.value.volume - 0.1);
-              // return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.audioVolumeUp) {
-              _videoPlayerController.setVolume(_videoPlayerController.value.volume + 0.1);
-              // return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.audioVolumeMute) {
-              _videoPlayerController.setVolume(_videoPlayerController.value.volume == 0 ? 1.0 : 0.0);
-              // return KeyEventResult.handled;
-            }
-          }
-          // return KeyEventResult.ignored;
-        },
-        child: Scaffold(
-          backgroundColor: black,
-          body: Center(
-            child: _buildPage(),
-          ),
+      child: Scaffold(
+        backgroundColor: black,
+        body: Center(
+          child: _buildPage(),
         ),
       ),
     );

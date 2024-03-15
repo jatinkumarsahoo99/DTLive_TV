@@ -23,6 +23,8 @@ dependencies:
   google_fonts: ^4.0.0
   buttons_tabbar: ^1.3.7
   subtitle_wrapper_package: ^2.1.1
+  get:
+  youtube_explode_dart:
 #  better_player:
 #  chewie:
   # Players

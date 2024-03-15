@@ -1,13 +1,17 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dtlive/packages/podplayer/lib/src/controllers/pod_player_controller.dart';
+import 'package:dtlive/packages/podplayer/lib/src/models/play_video_from.dart';
+import 'package:dtlive/packages/podplayer/lib/src/models/pod_player_config.dart';
+import 'package:dtlive/packages/podplayer/lib/src/pod_player.dart';
 import 'package:dtlive/provider/playerprovider.dart';
 import 'package:dtlive/utils/constant.dart';
 import 'package:dtlive/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pod_player/pod_player.dart';
+// import 'package:pod_player/pod_player.dart';
 import 'package:provider/provider.dart';
 class PlayerPod1 extends StatefulWidget {
  /* final int? videoId, videoType, typeId, stopTime;
