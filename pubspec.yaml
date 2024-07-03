@@ -31,7 +31,7 @@ dependencies:
   # youtube_player_flutter: ^8.1.2
   youtube_player_iframe: ^4.0.4
   vimeo_video_player: ^0.0.10
-  video_player: ^2.8.1
+  video_player: ^2.7.0
 #  video_player_web_hls: ^1.0.0+3
   # Players
   image_picker: ^1.0.0

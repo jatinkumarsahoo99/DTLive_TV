@@ -170,7 +170,7 @@ class ChewieState extends State<Chewie> {
 
     // The wakelock plugins checks whether it needs to perform an action internally,
     // so we do not need to check WakelockPlus.isEnabled.
-    Wakelock.disable();
+    // Wakelock.disable();
 
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
