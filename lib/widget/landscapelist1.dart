@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:dtlive/model/sectionlistmodel.dart' as section;
 import 'package:dtlive/model/channelsectionmodel.dart' as channel;
@@ -33,10 +32,8 @@ class LandscapeList1 extends StatefulWidget {
     required this.dataFrom,
     required this.typeId,
     required SidebarXController controller,
-  })  : _controller = controller,
-        super(key: key);
+  })  : super(key: key);
 
-  final SidebarXController _controller;
 
   @override
   State<LandscapeList1> createState() => _LandscapeList1State();
@@ -233,7 +230,7 @@ class _LandscapeList1State extends State<LandscapeList1> {
                   width: Dimens.widthLand-70,
                   height: Dimens.heightLand-25,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle
                   ),
                   child: ClipRRect(

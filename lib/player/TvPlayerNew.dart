@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class MyTvScreen extends StatefulWidget {
   final String urlData;
 
-  MyTvScreen({required this.urlData});
+  const MyTvScreen({super.key, required this.urlData});
 
   @override
   MyTvScreenState createState() => MyTvScreenState();
@@ -15,8 +16,11 @@ class MyTvScreenState extends State<MyTvScreen> {
 
   @override
   void initState() {
-    print("data"+widget!.urlData.toString());
-    _controller = VideoPlayerController.network(widget?.urlData.toString()??"");
+    super.initState();
+    if (kDebugMode) {
+      print("data${widget.urlData}");
+    }
+    _controller = VideoPlayerController.network(widget.urlData.toString());
     _controller.addListener(() {
       setState(() {});
     });
@@ -35,16 +39,16 @@ class MyTvScreenState extends State<MyTvScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("TV Player"),
+        title: const Text("TV Player"),
       ),
       body: SingleChildScrollView(
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            Container(
-              child: VideoPlayer(_controller),
+            SizedBox(
               height: 400,
               width: double.infinity,
+              child: VideoPlayer(_controller),
             ),
             _ControlsOverlay(controller: _controller),
             VideoProgressIndicator(_controller, allowScrubbing: true),
@@ -82,8 +86,8 @@ class _ControlsOverlay extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 50),
-              reverseDuration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 50),
+              reverseDuration: const Duration(milliseconds: 200),
               child: Row(
                 children: [
                   MaterialButton(
@@ -92,18 +96,18 @@ class _ControlsOverlay extends StatelessWidget {
                       controller
                           .seekTo(Duration(seconds: position!.inSeconds - 5));
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_back_ios,
                       color: Colors.white,
                       size: 20.0,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   controller.value.isPlaying
                       ? MaterialButton(
-                          child: Icon(
+                          child: const Icon(
                             Icons.pause,
                             color: Colors.white,
                             size: 30.0,
@@ -115,7 +119,7 @@ class _ControlsOverlay extends StatelessWidget {
                           },
                         )
                       : MaterialButton(
-                          child: Icon(
+                          child: const Icon(
                             Icons.play_arrow,
                             color: Colors.white,
                             size: 30.0,
@@ -126,7 +130,7 @@ class _ControlsOverlay extends StatelessWidget {
                                 : controller.play();
                           },
                         ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   MaterialButton(
@@ -135,13 +139,13 @@ class _ControlsOverlay extends StatelessWidget {
                       controller
                           .seekTo(Duration(seconds: position!.inSeconds + 5));
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_forward_ios,
                       color: Colors.white,
                       size: 20.0,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   PopupMenuButton(
@@ -164,7 +168,7 @@ class _ControlsOverlay extends StatelessWidget {
                     },
                     child: Text(
                       '${controller.value.playbackSpeed}x',
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ],

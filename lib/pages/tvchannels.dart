@@ -10,7 +10,6 @@ import 'package:dtlive/utils/constant.dart';
 import 'package:dtlive/utils/dimens.dart';
 import 'package:dtlive/utils/strings.dart';
 import 'package:dtlive/widget/focusbase.dart';
-import 'package:dtlive/widget/landscapelist.dart';
 import 'package:dtlive/widget/nodata.dart';
 import 'package:dtlive/pages/player_youtube.dart';
 import 'package:dtlive/provider/channelsectionprovider.dart';

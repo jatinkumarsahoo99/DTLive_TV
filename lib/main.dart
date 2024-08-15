@@ -2,9 +2,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dtlive/firebase_options.dart';
-import 'package:dtlive/pages/TestPage.dart';
 import 'package:dtlive/pages/find.dart';
 import 'package:dtlive/pages/home.dart';
 import 'package:dtlive/pages/login_screen.dart';
@@ -144,17 +143,17 @@ class _MyAppState extends State<MyApp> {
             trackColor: MaterialStateProperty.all(whiteTransparent),
           ),
           focusColor: Colors.grey,
-          inputDecorationTheme: InputDecorationTheme(
+          inputDecorationTheme: const InputDecorationTheme(
             focusColor: Colors.white,
             enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.white),
+              borderSide: BorderSide(color: Colors.white),
             ),
             floatingLabelBehavior: FloatingLabelBehavior.auto,
             errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red),
+              borderSide: BorderSide(color: Colors.red),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.deepPurpleAccent),
+              borderSide: BorderSide(color: Colors.deepPurpleAccent),
             ),
           ),
         ),
@@ -177,8 +176,8 @@ class _MyAppState extends State<MyApp> {
           );
         },
         home: const Splash(),
-        routes: {"/find": (context) => Find(),
-          "/login": (context) => LoginScreen(),},
+        routes: {"/find": (context) => const Find(),
+          "/login": (context) => const LoginScreen(),},
         // home: const TestPageController(),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {
@@ -195,10 +194,9 @@ class _MyAppState extends State<MyApp> {
 
   _getDeviceInfo() async {
     if (Platform.isAndroid) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      Constant.isTV =
-          androidInfo.systemFeatures.contains('android.software.leanback');
+      // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      // Constant.isTV = androidInfo.systemFeatures.contains('android.software.leanback');
       log("isTV =======================> ${Constant.isTV}");
     }
   }

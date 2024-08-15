@@ -15,7 +15,7 @@ class Constant {
   static const String oneSignalAppId = "08e33367-9a65-431f-a995-bbe95a0f0769";
 
   /* Constant for TV check */
-  static bool isTV = false;
+  static bool isTV = true;
 
   static String? userID;
   static String currencySymbol = "";

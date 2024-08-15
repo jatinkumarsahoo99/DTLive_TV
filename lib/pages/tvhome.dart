@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dtlive/model/sectionlistmodel.dart';
 import 'package:dtlive/model/sectiontypemodel.dart' as type;
@@ -598,7 +597,7 @@ class TVHomeState extends State<TVHome> {
       {required List<list.Result>? sectionList, required int index}) {
     /* video_type =>  1-video,  2-show,  3-language,  4-category */
     /* screen_layout =>  landscape, potrait, square */
-    print("Video type: " + (sectionList?[index].videoType.toString() ?? ""));
+    print("Video type: ${sectionList?[index].videoType.toString() ?? ""}");
     if (sectionList?[index].title?.toLowerCase().trim() == "popular ott") {
       return LandscapeList1(
         sectionDataList: sectionList?[index].data,

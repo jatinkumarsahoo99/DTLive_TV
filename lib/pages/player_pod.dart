@@ -131,7 +131,7 @@ class _PlayerPodState extends State<PlayerPod> {
               onKey: (RawKeyEvent key) {
                 if (key.logicalKey == LogicalKeyboardKey.arrowDown) {
                   f1.requestFocus();
-                  Timer(Duration(),(){
+                  Timer(const Duration(),(){
                     setState(() {
 
                     });

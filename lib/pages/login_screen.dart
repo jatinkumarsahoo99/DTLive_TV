@@ -13,13 +13,15 @@ import '../utils/constant.dart';
 import '../utils/utils.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   ProgressDialog? prDialog;
   SharedPre sharePref = SharedPre();
@@ -32,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       //   title: Text('Login Screen'),
       // ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -59,16 +61,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 30.0),
+                      const SizedBox(height: 30.0),
                       TextField(
                         controller: _emailController,
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         // onSubmitted: (s){
                         //   FocusScope.of(context).nextFocus();
                         // },
                         autofocus: true,
                         textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Email/Phone',
                           labelStyle: TextStyle(color: Colors.white),
                           prefixIcon: Icon(Icons.email, color: Colors.white),
@@ -80,17 +82,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextField(
                         controller: _passwordController,
                         obscureText: true,
                         // onSubmitted: (s){
                         //   FocusScope.of(context).nextFocus();
                         // },
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         textInputAction: TextInputAction.next,
                         onSubmitted: (s){
-                          print("object");
+                          debugPrint("object");
                           String email = _emailController.text;
                           String password = _passwordController.text;
                           if (_emailController.text == "") {
@@ -102,9 +104,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             login(email, password);
                           }
-                          print('Email: $email, Password: $password');
+                          debugPrint('Email: $email, Password: $password');
                         },
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Password',
                           labelStyle: TextStyle(color: Colors.white),
                           prefixIcon: Icon(Icons.lock, color: Colors.white),
@@ -116,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 32.0),
+                      const SizedBox(height: 32.0),
                       ElevatedButton(
                         onPressed: () {
                           // Add your authentication logic here
@@ -131,18 +133,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             login(email, password);
                           }
-                          print('Email: $email, Password: $password');
+                          debugPrint('Email: $email, Password: $password');
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.orange,
-                          onPrimary: Colors.white,
+                          backgroundColor: Colors.orange, // Replaces `primary`
+                          foregroundColor: Colors.white,  // Replaces `onPrimary`
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                           elevation: 10,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           child: Text(
                             'Login',
@@ -162,16 +164,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login(String mobile, String password) async {
-    if (prDialog == null) {
-      prDialog = ProgressDialog(
+    prDialog ??= ProgressDialog(
         context,
         isDismissible: true,
-        customBody: LinearProgressIndicator(
+        customBody: const LinearProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
           backgroundColor: Colors.white,
         ),
       );
-    }
     if (!(prDialog?.isShowing())!) {
       Utils.showProgress(context, prDialog!);
     }
@@ -214,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => Home(pageName: ""),
+            builder: (context) => const Home(pageName: ""),
           ),
         );
       } else {
@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => Home(pageName: ""),
+            builder: (context) => const Home(pageName: ""),
           ),
         );
       } else {

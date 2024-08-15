@@ -19,10 +19,8 @@ class TVRentStore extends StatefulWidget {
   const TVRentStore({
     Key? key,
     required SidebarXController controller,
-  })  : _controller = controller,
-        super(key: key);
+  })  : super(key: key);
 
-  final SidebarXController _controller;
 
   @override
   State<TVRentStore> createState() => TVRentStoreState();

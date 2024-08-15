@@ -4,7 +4,6 @@ import 'dart:math' as number;
 
 import 'package:dtlive/model/subtitlemodel.dart';
 import 'package:dtlive/pages/player_pod.dart';
-import 'package:dtlive/pages/player_better.dart';
 import 'package:dtlive/pages/player_vimeo.dart';
 import 'package:dtlive/pages/player_youtube.dart';
 import 'package:dtlive/pages/tvmoviedetails.dart';
@@ -20,7 +19,7 @@ import 'package:dtlive/utils/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_share/flutter_share.dart';
+// import 'package:flutter_share/flutter_share.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
@@ -98,7 +97,7 @@ class Utils {
     // controller.setExtended(isOpen);
   }
   static openUrl(String url) async {
-    if (await canLaunchUrl(Uri.parse(url!))) {
+    if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(
         Uri.parse(url),
         mode: LaunchMode.platformDefault,
@@ -1044,10 +1043,10 @@ class Utils {
       } else {
         shareMessage = "$shareDesc\n${Constant.iosAppUrl}";
       }
-      await FlutterShare.share(
-        title: Constant.appName ?? "DTLive",
-        linkUrl: shareMessage,
-      );
+      // await FlutterShare.share(
+      //   title: Constant.appName ?? "DTLive",
+      //   linkUrl: shareMessage,
+      // );
     } catch (e) {
       debugPrint("shareFile Exception ===> $e");
       return;
@@ -1087,10 +1086,10 @@ class Utils {
 
   static Future<void> shareApp(shareMessage) async {
     try {
-      await FlutterShare.share(
-        title: Constant.appName ?? "",
-        linkUrl: shareMessage,
-      );
+      // await FlutterShare.share(
+      //   title: Constant.appName ?? "",
+      //   linkUrl: shareMessage,
+      // );
     } catch (e) {
       debugPrint("shareFile Exception ===> $e");
       return;

@@ -20,7 +20,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:progress_dialog_null_safe/progress_dialog_null_safe.dart';
 import 'package:provider/provider.dart';
@@ -329,7 +329,7 @@ class LoginSocialState extends State<LoginSocial> {
                     onFocus: (isFocused) {},
                     onPressed: () {
                       debugPrint("Clicked on : ====> loginWith Apple");
-                      signInWithApple();
+                      // signInWithApple();
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width > 720
@@ -437,7 +437,7 @@ class LoginSocialState extends State<LoginSocial> {
     return digest.toString();
   }
 
-  Future<User?> signInWithApple() async {
+ /* Future<User?> signInWithApple() async {
     // To prevent replay attacks with the credential returned from Apple, we
     // include a nonce in the credential request. When signing in in with
     // Firebase, the nonce in the id token returned by Apple, is expected to
@@ -487,7 +487,7 @@ class LoginSocialState extends State<LoginSocial> {
       // await firebaseUser?.updatePhotoURL(photoURL);
       // await firebaseUser?.updateEmail(userEmail);
 
-      /* Save PhotoUrl in File */
+      *//* Save PhotoUrl in File *//*
       if (photoURL != null || photoURL != "") {
         mProfileImg = await Utils.saveImageInStorage(photoURL);
       }
@@ -497,7 +497,7 @@ class LoginSocialState extends State<LoginSocial> {
       debugPrint("Apple Login exception =====> $exception");
     }
     return null;
-  }
+  }*/
 
   checkAndNavigate(String mail, String displayName, String type) async {
     email = mail;

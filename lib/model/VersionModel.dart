@@ -11,17 +11,17 @@ class VersionModel {
     if (json['result'] != null) {
       result = <Result>[];
       json['result'].forEach((v) {
-        result!.add(new Result.fromJson(v));
+        result!.add(Result.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    if (this.result != null) {
-      data['result'] = this.result!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
+    if (result != null) {
+      data['result'] = result!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -66,15 +66,15 @@ class Result {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sl_no'] = this.slNo;
-    data['android_version_name'] = this.androidVersionName;
-    data['ios_version_name'] = this.iosVersionName;
-    data['android_version_code'] = this.androidVersionCode;
-    data['ios_version_code'] = this.iosVersionCode;
-    data['android_version_linkurl'] = this.androidVersionLinkurl;
-    data['ios_version_linkurl'] = this.iosVersionLinkurl;
-    data['created_at'] = this.createdAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sl_no'] = slNo;
+    data['android_version_name'] = androidVersionName;
+    data['ios_version_name'] = iosVersionName;
+    data['android_version_code'] = androidVersionCode;
+    data['ios_version_code'] = iosVersionCode;
+    data['android_version_linkurl'] = androidVersionLinkurl;
+    data['ios_version_linkurl'] = iosVersionLinkurl;
+    data['created_at'] = createdAt;
     return data;
   }
 }

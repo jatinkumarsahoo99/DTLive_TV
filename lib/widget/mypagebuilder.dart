@@ -1,4 +1,3 @@
-import 'package:dtlive/pages/activetv.dart';
 import 'package:dtlive/pages/tvchannels.dart';
 import 'package:dtlive/pages/tvhome.dart';
 import 'package:dtlive/pages/tvrentstore.dart';
